@@ -16,7 +16,7 @@ def test_handler_authorized():
     event = {
         'authorizationToken': f'Basic {CREDS}',
         'user': USERNAME,
-        'methodArn': '<method-arn>',
+        'methodArn': '<arn>/<stage>/GET/simple/pip',
     }
     ret = index.handler(event)
     exp = {
@@ -27,7 +27,10 @@ def test_handler_authorized():
                 {
                     'Action': 'execute-api:Invoke',
                     'Effect': 'Allow',
-                    'Resource': '<method-arn>',
+                    'Resource': [
+                        '<arn>/<stage>/GET/*',
+                        '<arn>/<stage>/HEAD/*',
+                    ],
                 },
             ],
         },
@@ -38,7 +41,7 @@ def test_handler_authorized():
 def test_handler_unauthorized():
     event = {
         'user': USERNAME,
-        'methodArn': '<method-arn>',
+        'methodArn': '<arn>/<stage>/GET/simple/pip',
     }
     ret = index.handler(event)
     exp = {
@@ -49,7 +52,10 @@ def test_handler_unauthorized():
                 {
                     'Action': 'execute-api:Invoke',
                     'Effect': 'Deny',
-                    'Resource': '<method-arn>',
+                    'Resource': [
+                        '<arn>/<stage>/GET/*',
+                        '<arn>/<stage>/HEAD/*',
+                    ],
                 },
             ],
         },

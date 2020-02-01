@@ -13,6 +13,7 @@ def handler(event, *_):
     authorization_token = event.get('authorizationToken')
     user = event.get('user')
     method_arn = event.get('methodArn')
+    arn, stage, _, *_ = method_arn.split('/')
 
     # Assemble response policy
     response = {
@@ -23,7 +24,10 @@ def handler(event, *_):
                 {
                     'Action': 'execute-api:Invoke',
                     'Effect': 'Deny',
-                    'Resource': method_arn,
+                    'Resource': [
+                        f'{arn}/{stage}/GET/*',
+                        f'{arn}/{stage}/HEAD/*',
+                    ],
                 },
             ],
         },
