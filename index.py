@@ -33,7 +33,7 @@ def handler(event, *_):
     try:
         _, auth64 = authorization_token.split(' ')
         username, password = base64.b64decode(auth64).decode().split(':')
-    except AttributeError:
+    except (AttributeError, ValueError):
         username = password = None
 
     # Update response
