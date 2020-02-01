@@ -8,24 +8,37 @@ BASIC_AUTH_PASSWORD = os.getenv('BASIC_AUTH_PASSWORD')
 
 def handler(event, *_):
     """ Basic auth. """
+    # Extract values from event
     print(f'EVENT {json.dumps(event)}')
-    _, auth64 = event['authorizationToken'].split(' ')
-    username, password = base64.b64decode(auth64).decode().split(':')
-    print(f'USERNAME {username}')
-    print(f'PASSWORD {password}')
+    authorization_token = event.get('authorizationToken')
+    user = event.get('user')
+    method_arn = event.get('methodArn')
+
+    # Assemble response policy
     response = {
-        'principalId': event.get('user'),
+        'principalId': user,
         'policyDocument': {
             'Version': '2012-10-17',
             'Statement': [
                 {
                     'Action': 'execute-api:Invoke',
                     'Effect': 'Deny',
-                    'Resource': event.get('methodArn'),
+                    'Resource': method_arn,
                 },
             ],
         },
     }
+
+    # Decode creds
+    try:
+        _, auth64 = authorization_token.split(' ')
+        username, password = base64.b64decode(auth64).decode().split(':')
+    except AttributeError:
+        username = password = None
+
+    # Update response
+    print(f'USERNAME {username}')
+    print(f'PASSWORD {password}')
     user_ok = BASIC_AUTH_USERNAME == username
     pass_ok = BASIC_AUTH_PASSWORD == password
     if user_ok and pass_ok:
