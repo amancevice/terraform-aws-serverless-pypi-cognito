@@ -1,0 +1,10 @@
+name: py.test
+on: push
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+    - run: pip install boto3 pytest pytest-cov
+    - run: py.test
