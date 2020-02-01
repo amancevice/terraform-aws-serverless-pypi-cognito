@@ -4,7 +4,7 @@ locals {
   basic_auth_password         = var.basic_auth_password
   lambda_description          = var.lambda_description
   lambda_function_name        = var.lambda_function_name
-  lambda_handler              = "index.basic_auth"
+  lambda_handler              = "index.handler"
   lambda_runtime              = "python3.8"
   log_group_retention_in_days = var.log_group_retention_in_days
   policy_name                 = var.policy_name

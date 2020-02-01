@@ -37,8 +37,6 @@ def handler(event, *_):
         username = password = None
 
     # Update response
-    print(f'USERNAME {username}')
-    print(f'PASSWORD {password}')
     user_ok = BASIC_AUTH_USERNAME == username
     pass_ok = BASIC_AUTH_PASSWORD == password
     if user_ok and pass_ok:
