@@ -1,5 +1,5 @@
 locals {
-  api                         = var.api
+  api_id                      = var.api_id
   basic_auth_username         = var.basic_auth_username
   basic_auth_password         = var.basic_auth_password
   lambda_description          = var.lambda_description
@@ -57,12 +57,12 @@ resource aws_api_gateway_authorizer basic {
   authorizer_credentials = aws_iam_role.role.arn
   authorizer_uri         = aws_lambda_function.lambda.invoke_arn
   name                   = "BASIC"
-  rest_api_id            = local.api.id
+  rest_api_id            = local.api_id
   type                   = "TOKEN"
 }
 
 resource aws_api_gateway_gateway_response unauthorized {
-  rest_api_id   = local.api.id
+  rest_api_id   = local.api_id
   status_code   = "401"
   response_type = "UNAUTHORIZED"
 
