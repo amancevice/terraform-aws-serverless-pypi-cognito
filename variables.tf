@@ -7,19 +7,9 @@ variable authorizer_name {
   default     = "COGNITO"
 }
 
-variable basic_auth_username {
-  description = "PyPI BASIC authorization username."
-  default     = null
-}
-
-variable basic_auth_password {
-  description = "PyPI BASIC authorization password."
-  default     = null
-}
-
 variable lambda_description {
   description = "REST API authorizer Lambda function description."
-  default     = "PyPI service REST API Authorizer"
+  default     = "PyPI REST API Authorizer"
 }
 
 variable lambda_function_name {
@@ -49,4 +39,8 @@ variable tags {
   description = "Resource tags."
   type        = map
   default     = {}
+}
+
+variable user_pool_name {
+  description = "Cognito user pool name."
 }

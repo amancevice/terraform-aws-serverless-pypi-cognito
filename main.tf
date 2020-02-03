@@ -1,7 +1,5 @@
 locals {
   api_id                      = var.api_id
-  basic_auth_username         = var.basic_auth_username
-  basic_auth_password         = var.basic_auth_password
   authorizer_name             = var.authorizer_name
   lambda_description          = var.lambda_description
   lambda_function_name        = var.lambda_function_name
@@ -12,6 +10,7 @@ locals {
   role_description            = var.role_description
   role_name                   = var.role_name
   tags                        = var.tags
+  user_pool_name              = var.user_pool_name
 }
 
 data archive_file package {
@@ -52,9 +51,15 @@ data aws_iam_policy_document policy {
 
     resources = ["*"]
   }
+
+  statement {
+    sid       = "InitiateAuth"
+    actions   = ["cognito-idp:InitiateAuth"]
+    resources = ["*"]
+  }
 }
 
-resource aws_api_gateway_authorizer basic {
+resource aws_api_gateway_authorizer authorizer {
   authorizer_credentials = aws_iam_role.role.arn
   authorizer_uri         = aws_lambda_function.lambda.invoke_arn
   name                   = local.authorizer_name
@@ -74,6 +79,20 @@ resource aws_api_gateway_gateway_response unauthorized {
   response_templates = {
     "application/json" = "{\"message\":$context.error.messageString}"
   }
+}
+
+resource aws_cognito_user_pool pool {
+  name = local.user_pool_name
+}
+
+resource aws_cognito_user_pool_client client {
+  name         = local.user_pool_name
+  user_pool_id = aws_cognito_user_pool.pool.id
+
+  explicit_auth_flows = [
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+  ]
 }
 
 resource aws_cloudwatch_log_group logs {
@@ -107,8 +126,7 @@ resource aws_lambda_function lambda {
 
   environment {
     variables = {
-      BASIC_AUTH_USERNAME = local.basic_auth_username
-      BASIC_AUTH_PASSWORD = local.basic_auth_password
+      COGNITO_CLIENT_ID = aws_cognito_user_pool_client.client.id
     }
   }
 }

@@ -2,8 +2,11 @@ import base64
 import json
 import os
 
-BASIC_AUTH_USERNAME = os.getenv('BASIC_AUTH_USERNAME')
-BASIC_AUTH_PASSWORD = os.getenv('BASIC_AUTH_PASSWORD')
+import boto3
+import botocore
+
+COGNITO = boto3.client('cognito-idp')
+COGNITO_CLIENT_ID = os.getenv('COGNITO_CLIENT_ID')
 
 
 def handler(event, *_):
@@ -40,10 +43,20 @@ def handler(event, *_):
     except (AttributeError, ValueError):
         username = password = None
 
+    try:
+        auth = COGNITO.initiate_auth(
+            AuthFlow='USER_PASSWORD_AUTH',
+            ClientId=COGNITO_CLIENT_ID,
+            AuthParameters={
+                'USERNAME': username,
+                'PASSWORD': password,
+            },
+        )
+    except botocore.exceptions.ClientError:
+        auth = None
+
     # Update response
-    user_ok = BASIC_AUTH_USERNAME == username
-    pass_ok = BASIC_AUTH_PASSWORD == password
-    if user_ok and pass_ok:
+    if auth:
         [
             statement.update(Effect='Allow')
             for statement in response['policyDocument']['Statement']
