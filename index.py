@@ -52,7 +52,8 @@ def handler(event, *_):
                 'PASSWORD': password,
             },
         )
-    except botocore.exceptions.ClientError:
+    except botocore.exceptions.ClientError as err:
+        print(err)
         auth = None
 
     # Update response

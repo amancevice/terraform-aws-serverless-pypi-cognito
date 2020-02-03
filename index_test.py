@@ -1,18 +1,18 @@
 import base64
-import os
 from unittest import mock
+
+import botocore.exceptions
 
 USERNAME = 'fizz'
 PASSWORD = 'buzz'
 CREDS = base64.b64encode(f'{USERNAME}:{PASSWORD}'.encode()).decode()
-os.environ['BASIC_AUTH_USERNAME'] = 'fizz'
-os.environ['BASIC_AUTH_PASSWORD'] = 'buzz'
 
 with mock.patch('boto3.client'):
     import index
 
 
 def test_handler_authorized():
+    index.COGNITO.initiate_auth.return_value = True
     event = {
         'authorizationToken': f'Basic {CREDS}',
         'user': USERNAME,
@@ -39,6 +39,10 @@ def test_handler_authorized():
 
 
 def test_handler_unauthorized():
+    index.COGNITO.initiate_auth.side_effect = botocore.exceptions.ClientError(
+        error_response={},
+        operation_name='InitiateAuth',
+    )
     event = {
         'user': USERNAME,
         'methodArn': '<arn>/<stage>/GET/simple/pip',
