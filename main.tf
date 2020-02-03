@@ -2,6 +2,7 @@ locals {
   api_id                      = var.api_id
   basic_auth_username         = var.basic_auth_username
   basic_auth_password         = var.basic_auth_password
+  authorizer_name             = var.authorizer_name
   lambda_description          = var.lambda_description
   lambda_function_name        = var.lambda_function_name
   lambda_handler              = "index.handler"
@@ -56,7 +57,7 @@ data aws_iam_policy_document policy {
 resource aws_api_gateway_authorizer basic {
   authorizer_credentials = aws_iam_role.role.arn
   authorizer_uri         = aws_lambda_function.lambda.invoke_arn
-  name                   = "BASIC"
+  name                   = local.authorizer_name
   rest_api_id            = local.api_id
   type                   = "TOKEN"
 }

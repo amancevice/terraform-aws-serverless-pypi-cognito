@@ -2,6 +2,11 @@ variable api_id {
   description = "API Gateway REST API ID."
 }
 
+variable authorizer_name {
+  description = "API Gateway authorizer name."
+  default     = "COGNITO"
+}
+
 variable basic_auth_username {
   description = "PyPI BASIC authorization username."
   default     = null
