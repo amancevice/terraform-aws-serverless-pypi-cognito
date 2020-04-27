@@ -16,6 +16,17 @@ variable lambda_function_name {
   description = "REST API authorizer Lambda function name"
 }
 
+variable lambda_publish {
+  description = "REST API authorizer Lambda publish trigger"
+  type        = bool
+  default     = false
+}
+
+variable lambda_qualifier {
+  description = "REST API authorizer Lambda function qualifier"
+  default     = null
+}
+
 variable log_group_retention_in_days {
   description = "CloudWatch log group retention period"
   default     = 30

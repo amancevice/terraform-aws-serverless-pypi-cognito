@@ -3,14 +3,15 @@ locals {
   authorizer_name             = var.authorizer_name
   lambda_description          = var.lambda_description
   lambda_function_name        = var.lambda_function_name
-  lambda_handler              = "index.handler"
-  lambda_runtime              = "python3.8"
+  lambda_publish              = var.lambda_publish
   log_group_retention_in_days = var.log_group_retention_in_days
   policy_name                 = var.policy_name
   role_description            = var.role_description
   role_name                   = var.role_name
   tags                        = var.tags
   user_pool_name              = var.user_pool_name
+
+  lambda_arn = var.lambda_qualifier == null ? aws_lambda_function.lambda.arn : "${aws_lambda_function.lambda.arn}:${var.lambda_qualifier}"
 }
 
 data archive_file package {
@@ -25,6 +26,7 @@ data aws_iam_policy_document assume_role {
 
     principals {
       type = "Service"
+
       identifiers = [
         "apigateway.amazonaws.com",
         "lambda.amazonaws.com",
@@ -37,7 +39,7 @@ data aws_iam_policy_document policy {
   statement {
     sid       = "InvokeAuthorizer"
     actions   = ["lambda:InvokeFunction"]
-    resources = [aws_lambda_function.lambda.arn]
+    resources = [local.lambda_arn]
   }
 
   statement {
@@ -118,9 +120,10 @@ resource aws_lambda_function lambda {
   description      = local.lambda_description
   filename         = data.archive_file.package.output_path
   function_name    = local.lambda_function_name
-  handler          = local.lambda_handler
+  handler          = "index.handler"
+  publish          = local.lambda_publish
   role             = aws_iam_role.role.arn
-  runtime          = local.lambda_runtime
+  runtime          = "python3.8"
   source_code_hash = data.archive_file.package.output_base64sha256
   tags             = local.tags
 

@@ -30,6 +30,7 @@ def test_handler_authorized():
                     'Resource': [
                         '<arn>/<stage>/GET/*',
                         '<arn>/<stage>/HEAD/*',
+                        '<arn>/<stage>/POST/*',
                     ],
                 },
             ],
@@ -59,6 +60,7 @@ def test_handler_unauthorized():
                     'Resource': [
                         '<arn>/<stage>/GET/*',
                         '<arn>/<stage>/HEAD/*',
+                        '<arn>/<stage>/POST/*',
                     ],
                 },
             ],
