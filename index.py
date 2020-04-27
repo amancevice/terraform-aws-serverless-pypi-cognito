@@ -30,6 +30,7 @@ def handler(event, *_):
                     'Resource': [
                         f'{arn}/{stage}/GET/*',
                         f'{arn}/{stage}/HEAD/*',
+                        f'{arn}/{stage}/POST/*',
                     ],
                 },
             ],
