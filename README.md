@@ -1,6 +1,11 @@
 # Serverless PyPI with Cognito
 
-Secure a serverless PyPI deployed with the [serverless-pypi](https://github.com/amancevice/terraform-aws-serverless-pypi) Terraform module using AWS Cognito and Basic Authentication.
+[![terraform](https://img.shields.io/github/v/tag/amancevice/terraform-aws-serverless-pypi-cognito?color=62f&label=version&logo=terraform&style=flat-square)](https://registry.terraform.io/modules/amancevice/serverless-pypi/aws)
+[![py.test](https://img.shields.io/github/workflow/status/amancevice/terraform-aws-serverless-pypi-cognito/py.test?logo=github&style=flat-square)](https://github.com/amancevice/terraform-aws-serverless-pypi-cognito/actions)
+[![maintainability](https://img.shields.io/codeclimate/maintainability/amancevice/terraform-aws-serverless-pypi-cognito?logo=code-climate&style=flat-square)](https://codeclimate.com/github/amancevice/terraform-aws-serverless-pypi-cognito/maintainability)
+[![coverage](https://img.shields.io/codeclimate/coverage/amancevice/terraform-aws-serverless-pypi-cognito?logo=code-climate&style=flat-square)](https://codeclimate.com/github/amancevice/terraform-aws-serverless-pypi-cognito/test_coverage)
+
+Secure a serverless PyPI deployed with the [serverless-pypi](https://github.com/amancevice/terraform-aws-serverless-pypi-cognito) Terraform module using AWS Cognito and Basic Authentication.
 
 ## Usage
 

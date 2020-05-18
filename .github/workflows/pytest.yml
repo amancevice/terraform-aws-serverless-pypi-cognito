@@ -6,5 +6,18 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
-    - run: pip install boto3 pytest pytest-cov
+    - name: Set up code climate
+      uses: amancevice/code-climate-action@v0
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        command: before-build
+    - run: pip install boto3 flake8 pytest pytest-cov
+    - run: flake8
     - run: py.test
+    - name: Send coverage report
+      uses: amancevice/code-climate-action@v0
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        command: after-build
