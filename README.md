@@ -14,7 +14,7 @@ Provide a single username and password to the module to create an API Gateway au
 ```hcl
 module serverless_pypi_cognito {
   source  = "amancevice/serverless-pypi-cognito/aws"
-  version = "~> 0.2"
+  version = "~> 0.3"
 
   api                  = "<rest-api-id>"
   lambda_function_name = "pypi-authorizer"
@@ -28,7 +28,7 @@ You will also need to update your serverless PyPI module with the authorizer ID 
 ```hcl
 module serverless_pypi {
   source  = "amancevice/serverless-pypi/aws"
-  version = "~> 0.2"
+  version = "~> 1.2"
 
   # ...
   api_authorization = "CUSTOM"
