@@ -1,10 +1,19 @@
-variable api_id {
-  description = "API Gateway REST API ID"
+variable cognito_user_pool_name {
+  description = "Cognito user pool name"
 }
 
-variable authorizer_name {
-  description = "API Gateway authorizer name"
-  default     = "COGNITO"
+variable iam_role_description {
+  description = "Lambda functions IAM role description"
+  default     = "PyPI Lambda permissions"
+}
+
+variable iam_role_name {
+  description = "Authorizer Lambda function role name"
+}
+
+variable iam_role_policy_name {
+  description = "IAM role inline policy name"
+  default     = "pypi-authorizer-permissions"
 }
 
 variable lambda_description {
@@ -32,26 +41,17 @@ variable log_group_retention_in_days {
   default     = 30
 }
 
-variable policy_name {
-  description = "IAM role inline policy name"
-  default     = "pypi-authorizer-permissions"
+variable rest_api_authorizer_name {
+  description = "API Gateway authorizer name"
+  default     = "COGNITO"
 }
 
-variable role_description {
-  description = "Lambda functions IAM role description"
-  default     = "PyPI Lambda permissions"
-}
-
-variable role_name {
-  description = "Authorizer Lambda function role name"
+variable rest_api_id {
+  description = "API Gateway REST API ID"
 }
 
 variable tags {
   description = "Resource tags"
   type        = map
   default     = {}
-}
-
-variable user_pool_name {
-  description = "Cognito user pool name"
 }
