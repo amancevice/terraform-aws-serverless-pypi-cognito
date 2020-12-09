@@ -1,5 +1,12 @@
 terraform {
-  required_version = "~> 0.12"
+  required_version = "~> 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
 }
 
 locals {
@@ -34,7 +41,7 @@ locals {
 
 # IAM
 
-data aws_iam_policy_document assume_role {
+data "aws_iam_policy_document" "assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -49,7 +56,7 @@ data aws_iam_policy_document assume_role {
   }
 }
 
-data aws_iam_policy_document policy {
+data "aws_iam_policy_document" "policy" {
   statement {
     sid       = "InvokeAuthorizer"
     actions   = ["lambda:InvokeFunction"]
@@ -75,14 +82,14 @@ data aws_iam_policy_document policy {
   }
 }
 
-resource aws_iam_role role {
+resource "aws_iam_role" "role" {
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
   description        = local.iam_role.description
   name               = local.iam_role.name
   tags               = local.tags
 }
 
-resource aws_iam_role_policy policy {
+resource "aws_iam_role_policy" "policy" {
   name   = local.iam_role.policy_name
   role   = aws_iam_role.role.id
   policy = data.aws_iam_policy_document.policy.json
@@ -90,11 +97,11 @@ resource aws_iam_role_policy policy {
 
 # COGNITO
 
-resource aws_cognito_user_pool pool {
+resource "aws_cognito_user_pool" "pool" {
   name = local.cognito.user_pool_name
 }
 
-resource aws_cognito_user_pool_client client {
+resource "aws_cognito_user_pool_client" "client" {
   name         = local.cognito.user_pool_name
   user_pool_id = aws_cognito_user_pool.pool.id
 
@@ -106,19 +113,19 @@ resource aws_cognito_user_pool_client client {
 
 # LAMBDA :: AUTHORIZER
 
-data archive_file package {
+data "archive_file" "package" {
   source_file = "${path.module}/index.py"
   output_path = "${path.module}/package.zip"
   type        = "zip"
 }
 
-resource aws_cloudwatch_log_group logs {
+resource "aws_cloudwatch_log_group" "logs" {
   name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
   retention_in_days = local.logs.retention_in_days
   tags              = local.tags
 }
 
-resource aws_lambda_function lambda {
+resource "aws_lambda_function" "lambda" {
   description      = local.lambda.description
   filename         = data.archive_file.package.output_path
   function_name    = local.lambda.function_name
@@ -138,7 +145,7 @@ resource aws_lambda_function lambda {
 
 # REST API :: AUTHORIZER
 
-resource aws_api_gateway_authorizer authorizer {
+resource "aws_api_gateway_authorizer" "authorizer" {
   authorizer_credentials = aws_iam_role.role.arn
   authorizer_uri         = aws_lambda_function.lambda.invoke_arn
   name                   = local.rest_api.authorizer_name
@@ -146,7 +153,7 @@ resource aws_api_gateway_authorizer authorizer {
   type                   = "TOKEN"
 }
 
-resource aws_api_gateway_gateway_response unauthorized {
+resource "aws_api_gateway_gateway_response" "unauthorized" {
   rest_api_id   = local.rest_api.id
   status_code   = "401"
   response_type = "UNAUTHORIZED"
