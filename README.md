@@ -11,28 +11,29 @@ Secure a serverless PyPI deployed with the [serverless-pypi](https://github.com/
 
 Provide a single username and password to the module to create an API Gateway authorizer function for your serverless PyPI:
 
-```hcl
-module serverless_pypi_cognito {
-  source  = "amancevice/serverless-pypi-cognito/aws"
-  version = "~> 0.3"
-
-  api                  = "<rest-api-id>"
-  lambda_function_name = "pypi-authorizer"
-  role_name            = "pypi-authorizer-role"
-  user_pool_name       = "serverless-pypi"
+```terraform
+resource "aws_apigatewayv2_api" "pypi" {
+  name          = "pypi"
+  protocol_type = "HTTP"
+  # …
 }
-```
 
-You will also need to update your serverless PyPI module with the authorizer ID and authorization strategy:
-
-```hcl
 module serverless_pypi {
-  source  = "amancevice/serverless-pypi/aws"
-  version = "~> 1.2"
+  source  = "amancevice/serverless-pypi-cognito/aws"
+  version = "~> 3.0"
 
-  # ...
   api_authorization = "CUSTOM"
   api_authorizer_id = module.serverless_pypi_cognito.authorizer.id
-  # ...
+  # …
+}
+
+module serverless_pypi_cognito {
+  source  = "amancevice/serverless-pypi-cognito/aws"
+  version = "~> 2.0"
+
+  api_id                 = aws_apigatewayv2_api.pypi.id
+  cognito_user_pool_name = "serverless-pypi-cognito-pool"
+  iam_role_name          = module.serverless_pypi.iam_role.name
+  lambda_function_name   = "serverless-pypi-authorizer"
 }
 ```
