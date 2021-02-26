@@ -127,7 +127,7 @@ resource "aws_lambda_permission" "invoke_api" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${local.http_api.execution_arn}/*/*/*"
+  source_arn    = "${local.http_api.execution_arn}/authorizers/${aws_apigatewayv2_authorizer.authorizer.id}"
   statement_id  = "InvokeAPI"
 }
 
